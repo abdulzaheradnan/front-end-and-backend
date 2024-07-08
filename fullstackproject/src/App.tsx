@@ -25,7 +25,7 @@ const onSubmit=(values:any,{resetForm}:any )=>{
   setdata(values)
   axios.post("http://localhost:4000/signin",{username:values.username,password:values.password})
   .then((response)=>{
-    console.log(response.data)
+    console.log(response.data.message)
 
   })
   resetForm()
