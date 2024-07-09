@@ -1,5 +1,6 @@
 const express=require("express")
-
+const bcrypt=require("bcrypt")
+const saltRounds=12
 require("dotenv").config()
 const {MongoClient}=require("mongodb")
 const url=process.env.Database_url
@@ -15,10 +16,20 @@ signuprouter.post("/signin",async(req,res,next)=>{
     console.log("connected to server")
     const db = client.db(dbname)
     const collection = db.collection("Employelist")
-    const result = await collection.insertOne({ username, password })
-    res.send({
-        message:"signup sucessfully yes"
+    bcrypt.genSalt(saltRounds,(err,salt)=>{
+        if(err)throw err;
+        bcrypt.hash(password,salt,async(err,hash)=>{
+            if (err)throw err;
+            const result = await collection.insertOne({ username, password:hash })
+            client.close()
+            res.send({
+                message:"signup sucessfully yes"
+            })
+        })
+
+
     })
+   
 })
 module.exports=signuprouter
 
