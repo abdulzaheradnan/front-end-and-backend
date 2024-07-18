@@ -72,6 +72,12 @@ button:focus-visible {
   width: 350px;
   height: 250px;
 }
+.maincontainer2{
+  border: 1px solid black;
+  width: 350px;
+  height: 280px;
+
+}
 .inputcontainer{
   margin: 25px;
 }

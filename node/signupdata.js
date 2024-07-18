@@ -1,7 +1,9 @@
 const express=require("express")
 const bcrypt=require("bcrypt")
-const saltRounds=12
 require("dotenv").config()
+const jwt=require("jsonwebtoken")
+const saltRounds=12
+const secretkey=process.env.Secret_key
 const {MongoClient}=require("mongodb")
 const url=process.env.Database_url
 const client=new MongoClient(url)
@@ -21,9 +23,13 @@ signuprouter.post("/signin",async(req,res,next)=>{
         bcrypt.hash(password,salt,async(err,hash)=>{
             if (err)throw err;
             const result = await collection.insertOne({ username, password:hash })
+            const user=await collection.findOne({username})
+            console.log("apna hai bhai",user)
+           const token= jwt.sign(user,secretkey,{expiresIn:"1h"})
             client.close()
             res.send({
-                message:"signup sucessfully yes"
+                message:"signup sucessfully yes",
+                token:token
             })
         })
 

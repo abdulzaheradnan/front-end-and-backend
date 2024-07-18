@@ -7,16 +7,19 @@ import * as Yup from "yup"
 import { Errorcomponent } from './Errorcomponent'
 import { Signin } from "./signin"
 import axios from 'axios'
+import {Login} from "./login"
 function App() {
   const [signup, setsignup] = useState(true)
+  const [signup2,setsignup2]=useState(true)
   const [data, setdata] = useState({})
+  const [savetoken,setsavetoken]=useState("")
   const initialValues = {
     username: "",
     password: ""
   }
 
 
-  const valiationSchema = Yup.object({
+  const validationSchema = Yup.object({
     username: Yup.string().required("required"),
     password: Yup.string().required("required")
   })
@@ -25,8 +28,8 @@ function App() {
     setdata(values)
     axios.post("http://localhost:4000/signin", { username: values.username, password: values.password })
       .then((response) => {
-        console.log(response.data.message)
-
+        console.log(response.data.message,"token",response.data.token)
+        setsavetoken(response.data.token)
       })
     resetForm()
     if (values) {
@@ -47,16 +50,22 @@ function App() {
 
     fetchdata()
   }, [])
+  localStorage.setItem("newuser",JSON.stringify(savetoken))
 
-  console.log("hre ", data.username)
+
+  // console.log("hre ", data.username)
+  const item =JSON.parse(localStorage.getItem("newuser"))
+  // useEffect(()=>{
+
+  // },[item])
 
   return (
     <div>
-      {signup == true ?
+      {signup==true? 
         <div className='maincontainer'>
           <Formik
             initialValues={initialValues}
-            validationSchema={valiationSchema}
+            validationSchema={validationSchema}
             onSubmit={onSubmit}
           >
 
@@ -83,7 +92,13 @@ function App() {
             </Form>
           </Formik>
         </div> :
+        <div>
+          {
+            signup2==true ? 
+          
+        <Login value={data} signup2={signup2} setsignup2={setsignup2} token={item}></Login>:
         <Signin value={data}></Signin>}
+        </div>}
 
     </div>
   )
